@@ -1,6 +1,7 @@
 const express = require('express');
 const dotenv = require('dotenv');
 const connectDB = require('./config/db');
+const registerRoute = require('./routes/register'); // Route for user registration
 
 // Load environment variables
 dotenv.config();
@@ -16,4 +17,7 @@ app.use(express.json());
 // Serve static files from the public directory
 app.use(express.static('public'));
 
-module.exports = app;
+// Routes
+app.use('/api/register', registerRoute); // Use the register route
+
+module.exports = app; // Export the app

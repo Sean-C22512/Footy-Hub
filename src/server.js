@@ -1,6 +1,10 @@
-const app = require('./app');  // Import the Express app from app.js
-const PORT = process.env.PORT || 3000;  // Set the port, default to 3000
+const app = require('./app'); // Import the app
+const dotenv = require('dotenv');
+
+dotenv.config();
+
+const PORT = process.env.PORT || 5040;
 
 app.listen(PORT, () => {
-    console.log(`Server is running on http://localhost:${PORT}`);
+    console.log(`Server running on http://localhost:${PORT}`); // Debugging
 });
