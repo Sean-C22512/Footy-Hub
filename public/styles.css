@@ -1,0 +1,46 @@
+/* Custom gradient background inspired by examples found on Gradient Hunt: https://gradienthunt.com/ */
+body {
+    background: linear-gradient(to bottom, #1d1d1d, #6a0572, #e91e63, #8e44ad, #3498db);
+    color: white;
+    min-height: 100vh;
+}
+
+/* Hero Section */
+/* Hero section structure inspired by Bootstrap's utilities and example hero sections */
+/* Source: https://getbootstrap.com/docs/5.2/examples/ */
+.hero-section {
+    text-align: center;
+    padding: 5rem 1rem;
+}
+.hero-section h1 {
+    font-size: 3rem;
+    font-weight: bold;
+}
+/* Button styling customized for branding, original button styles inspired by Bootstrap */
+/* Source: https://getbootstrap.com/docs/5.2/components/buttons/ */
+.hero-section .btn {
+    margin-top: 1rem;
+    background-color: #ff4081; /* Custom color inspired by Material Design Pink */
+    color: white;
+    padding: 0.75rem 1.5rem;
+    border-radius: 0.5rem;
+}
+
+/* Cards Section */
+/* Cards layout and structure inspired by Bootstrap's card components */
+/* Source: https://getbootstrap.com/docs/5.2/components/card/ */
+.cards-section {
+    padding: 3rem 1rem;
+}
+/* Custom card styling with dark background for contrast */
+/* Custom styles built upon the base card component in Bootstrap */
+.card {
+    background-color: #1d1d1d; /* Dark tone for consistency with theme */
+    border: none;
+    padding: 2rem;
+    border-radius: 0.5rem;
+    color: white;
+}
+.card h5 {
+    font-weight: bold;
+}

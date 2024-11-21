@@ -4,60 +4,69 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>FootyHub</title>
+
     <!-- Quartz Theme from Bootswatch -->
+    <!-- Source: https://bootswatch.com/quartz/ -->
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootswatch@5.2.3/dist/quartz/bootstrap.min.css">
+
+    <!-- Custom styles for the webpage -->
+    <!-- Created by the FootyHub development team -->
+    <link rel="stylesheet" href="styles.css">
 </head>
 <body>
-<!-- Your content here -->
-<div class="container mt-5">
-    <h2>Login</h2>
-    <form>
-        <div class="mb-3">
-            <label for="email" class="form-label">Email address</label>
-            <input type="email" class="form-control" id="email" placeholder="Enter your email">
+<!-- Navbar -->
+<!-- Adapted from the Bootstrap Navbar component -->
+<!-- Source: https://getbootstrap.com/docs/5.2/components/navbar/ -->
+<nav class="navbar navbar-expand-lg navbar-dark">
+    <div class="container-fluid">
+        <a class="navbar-brand" href="#">FootyHub</a>
+        <div class="collapse navbar-collapse" id="navbarNav">
+            <ul class="navbar-nav ms-auto">
+                <li class="nav-item">
+                    <a class="nav-link" href="register.html">Login/Register</a>
+                </li>
+            </ul>
         </div>
-        <div class="mb-3">
-            <label for="password" class="form-label">Password</label>
-            <input type="password" class="form-control" id="password" placeholder="Enter your password">
-        </div>
-        <button type="submit" class="btn btn-primary w-100">Login</button>
-        <p class="text-center mt-3">
-            Don’t have an account? <a href="#" data-bs-toggle="modal" data-bs-target="#registerModal">Create Account</a>
-        </p>
-    </form>
+    </div>
+</nav>
+
+<!-- Hero Section -->
+<div class="hero-section">
+    <h1>Welcome to FootyHub</h1>
+    <p>Your ultimate football companion. Stats, players, and matches all in one place.</p>
+    <a href="register.html" class="btn">Get Started</a>
 </div>
 
-<!-- Registration Modal https://getbootstrap.com/docs/4.3/components/modal/ -->
-<div class="modal fade" id="registerModal" tabindex="-1" aria-labelledby="registerModalLabel" aria-hidden="true">
-    <div class="modal-dialog">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h5 class="modal-title" id="registerModalLabel">Create Account</h5>
-                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+<!-- Cards Section -->
+<!-- Adapted layout and styling inspiration from Bootstrap's grid system -->
+<!-- Source: https://getbootstrap.com/docs/5.2/layout/grid/ -->
+<div class="cards-section">
+    <div class="container">
+        <div class="row">
+            <div class="col-md-4 d-flex justify-content-center">
+                <div class="card text-center w-100">
+                    <h5 class="card-title">Track Players</h5>
+                    <p class="card-text">Follow your favorite players and get up-to-date stats.</p>
+                </div>
             </div>
-            <div class="modal-body">
-                <form id="registerForm">
-                    <div class="mb-3">
-                        <label for="registerName" class="form-label">Full Name</label>
-                        <input type="text" class="form-control" id="registerName" placeholder="Enter your name" required>
-                    </div>
-                    <div class="mb-3">
-                        <label for="registerEmail" class="form-label">Email address</label>
-                        <input type="email" class="form-control" id="registerEmail" placeholder="Enter your email" required>
-                    </div>
-                    <div class="mb-3">
-                        <label for="registerPassword" class="form-label">Password</label>
-                        <input type="password" class="form-control" id="registerPassword" placeholder="Enter your password" required>
-                    </div>
-                    <button type="submit" class="btn btn-success w-100">Create Account</button>
-                </form>
+            <div class="col-md-4 d-flex justify-content-center">
+                <div class="card text-center w-100">
+                    <h5 class="card-title">Analyze Matches</h5>
+                    <p class="card-text">Detailed analysis of past and ongoing matches.</p>
+                </div>
+            </div>
+            <div class="col-md-4 d-flex justify-content-center">
+                <div class="card text-center w-100">
+                    <h5 class="card-title">Join the Community</h5>
+                    <p class="card-text">Engage with football fans from around the world.</p>
+                </div>
             </div>
         </div>
     </div>
 </div>
-<!-- Include the script -->
-<script src="scripts.js"></script>
-<!-- Bootstrap JavaScript Bundle with Popper (Required for Modals) -->
+
+<!-- Bootstrap JavaScript Bundle with Popper -->
+<!-- Source: https://getbootstrap.com/docs/5.2/getting-started/introduction/ -->
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/js/bootstrap.bundle.min.js"></script>
 </body>
 </html>
