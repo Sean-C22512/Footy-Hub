@@ -136,6 +136,9 @@ document.addEventListener('DOMContentLoaded', () => {
                             <button class="btn btn-danger btn-sm ms-3 delete-player-btn" data-id="${player._id}">
                                 <i class="bi bi-trash"></i> <!-- Trash icon -->
                             </button>
+                            <button class="btn btn-warning btn-sm ms-2 edit-player-btn" data-id="${player._id}">
+                                <i class="bi bi-pencil"></i> <!-- Edit icon -->
+                            </button>
                         </div>
                     </li>
                 `;
@@ -147,14 +150,14 @@ document.addEventListener('DOMContentLoaded', () => {
                     // Add event listeners for delete buttons
                     document.querySelectorAll('.delete-player-btn').forEach(button => {
                         button.addEventListener('click', async (e) => {
-                            // Get the button element explicitly
-                            const buttonElement = e.currentTarget; // Ensure it's the button triggering the event
-                            const playerId = buttonElement.getAttribute('data-id'); // Retrieve the data-id attribute
+                            const buttonElement = e.currentTarget; // Button triggering the event
+                            const playerId = buttonElement.getAttribute('data-id'); // Get player ID
 
                             if (!playerId) {
                                 console.error('Player ID not found on the delete button');
                                 return;
                             }
+
                             if (confirm('Are you sure you want to delete this player?')) {
                                 try {
                                     const deleteResponse = await fetch(`/api/players/delete/${playerId}`, {
@@ -173,12 +176,103 @@ document.addEventListener('DOMContentLoaded', () => {
                             }
                         });
                     });
+
+                    // Add event listeners for edit buttons
+                    document.querySelectorAll('.edit-player-btn').forEach(button => {
+                        button.addEventListener('click', async (e) => {
+                            const buttonElement = e.currentTarget; // Button triggering the event
+                            const playerId = buttonElement.getAttribute('data-id'); // Get player ID
+
+                            if (!playerId) {
+                                console.error('Player ID not found on the edit button');
+                                return;
+                            }
+
+                            try {
+                                const playerResponse = await fetch(`/api/players/${playerId}`); // Fetch player details
+                                if (!playerResponse.ok) {
+                                    alert('Failed to fetch player details');
+                                    return;
+                                }
+
+                                const player = await playerResponse.json();
+                                // Render an edit form with the player's current data
+                                crudContent.innerHTML = `
+                            <h3>Edit Player</h3>
+                            <form id="editPlayerForm">
+                                <div class="mb-3">
+                                    <label for="editPlayerName" class="form-label">Player Name</label>
+                                    <input type="text" class="form-control" id="editPlayerName" value="${player.name}" required>
+                                </div>
+                                <div class="mb-3">
+                                    <label for="editPlayerTeam" class="form-label">Team</label>
+                                    <input type="text" class="form-control" id="editPlayerTeam" value="${player.team}" required>
+                                </div>
+                                <div class="mb-3">
+                                    <label for="editPlayerPosition" class="form-label">Position</label>
+                                    <input type="text" class="form-control" id="editPlayerPosition" value="${player.position}" required>
+                                </div>
+                                <div class="mb-3">
+                                    <label for="editPlayerNationality" class="form-label">Nationality</label>
+                                    <input type="text" class="form-control" id="editPlayerNationality" value="${player.nationality || ''}">
+                                </div>
+                                <div class="mb-3">
+                                    <label for="editPlayerAge" class="form-label">Age</label>
+                                    <input type="number" class="form-control" id="editPlayerAge" value="${player.age || ''}">
+                                </div>
+                                <div class="mb-3">
+                                    <label for="editPlayerGoals" class="form-label">Goals</label>
+                                    <input type="number" class="form-control" id="editPlayerGoals" value="${player.goals || 0}">
+                                </div>
+                                <button type="submit" class="btn btn-warning">Update Player</button>
+                            </form>
+                        `;
+
+                                // Add event listener for the edit form submission
+                                const editPlayerForm = document.getElementById('editPlayerForm');
+                                editPlayerForm.addEventListener('submit', async (e) => {
+                                    e.preventDefault();
+
+                                    const updatedPlayer = {
+                                        name: document.getElementById('editPlayerName').value.trim(),
+                                        team: document.getElementById('editPlayerTeam').value.trim(),
+                                        position: document.getElementById('editPlayerPosition').value.trim(),
+                                        nationality: document.getElementById('editPlayerNationality').value.trim(),
+                                        age: document.getElementById('editPlayerAge').value,
+                                        goals: document.getElementById('editPlayerGoals').value
+                                    };
+
+                                    try {
+                                        const updateResponse = await fetch(`/api/players/update/${playerId}`, {
+                                            method: 'PUT',
+                                            headers: { 'Content-Type': 'application/json' },
+                                            body: JSON.stringify(updatedPlayer)
+                                        });
+
+                                        if (updateResponse.ok) {
+                                            alert('Player updated successfully');
+                                            viewPlayersBtn.click(); // Refresh the player list
+                                        } else {
+                                            alert('Failed to update player');
+                                        }
+                                    } catch (updateError) {
+                                        console.error('Error updating player:', updateError);
+                                        alert('An error occurred while updating the player.');
+                                    }
+                                });
+                            } catch (fetchError) {
+                                console.error('Error fetching player details:', fetchError);
+                                alert('An error occurred while fetching player details.');
+                            }
+                        });
+                    });
                 } catch (error) {
                     crudContent.innerHTML = '<p class="text-danger">Failed to fetch players.</p>';
                     console.error('Error fetching players:', error);
                 }
             });
         }
+
 
     }
 });
