@@ -2,6 +2,7 @@ const express = require('express'); // Handle http requests
 const dotenv = require('dotenv'); // Load environment Variables
 const connectDB = require('./config/db'); // to connect to a MongoDB database.
 const registerRoute = require('./routes/register'); // Route for user registration
+const playerRoutes = require('./routes/playerRoutes');
 
 // Load environment variables
 dotenv.config();
@@ -21,5 +22,6 @@ app.use(express.static('public'));
 
 // Routes
 app.use('/api/register', registerRoute); // Use the register route
+app.use('/api/players', playerRoutes); // Prefix routes with /api/players
 
 module.exports = app; // Export the app
