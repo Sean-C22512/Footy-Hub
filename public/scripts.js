@@ -123,26 +123,62 @@ document.addEventListener('DOMContentLoaded', () => {
                     const players = await response.json();
 
                     let playersHTML = `
-                        <h3>All Players</h3>
-                        <ul class="list-group">
-                    `;
+                <h3>All Players</h3>
+                <ul class="list-group">
+            `;
 
                     players.forEach(player => {
                         playersHTML += `
-                            <li class="list-group-item d-flex justify-content-between align-items-center">
-                                ${player.name} (${player.team} - ${player.position})
-                                <span class="badge bg-primary">${player.goals} Goals</span>
-                            </li>
-                        `;
+                    <li class="list-group-item d-flex justify-content-between align-items-center">
+                        ${player.name} (${player.team} - ${player.position})
+                        <div>
+                            <span class="badge bg-primary">${player.goals} Goals</span>
+                            <button class="btn btn-danger btn-sm ms-3 delete-player-btn" data-id="${player._id}">
+                                <i class="bi bi-trash"></i> <!-- Trash icon -->
+                            </button>
+                        </div>
+                    </li>
+                `;
                     });
 
                     playersHTML += '</ul>';
                     crudContent.innerHTML = playersHTML; // Render player list in the CRUD content area
+
+                    // Add event listeners for delete buttons
+                    document.querySelectorAll('.delete-player-btn').forEach(button => {
+                        button.addEventListener('click', async (e) => {
+                            // Get the button element explicitly
+                            const buttonElement = e.currentTarget; // Ensure it's the button triggering the event
+                            const playerId = buttonElement.getAttribute('data-id'); // Retrieve the data-id attribute
+
+                            if (!playerId) {
+                                console.error('Player ID not found on the delete button');
+                                return;
+                            }
+                            if (confirm('Are you sure you want to delete this player?')) {
+                                try {
+                                    const deleteResponse = await fetch(`/api/players/delete/${playerId}`, {
+                                        method: 'DELETE'
+                                    });
+                                    if (deleteResponse.ok) {
+                                        alert('Player deleted successfully');
+                                        viewPlayersBtn.click(); // Refresh the player list
+                                    } else {
+                                        alert('Failed to delete player');
+                                    }
+                                } catch (deleteError) {
+                                    console.error('Error deleting player:', deleteError);
+                                    alert('An error occurred while deleting the player.');
+                                }
+                            }
+                        });
+                    });
                 } catch (error) {
                     crudContent.innerHTML = '<p class="text-danger">Failed to fetch players.</p>';
                     console.error('Error fetching players:', error);
                 }
             });
         }
+
     }
 });
