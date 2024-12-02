@@ -1,5 +1,74 @@
-export function renderPlayers(players, container) {
-    container.innerHTML = players.map(player => `
-        <div>${player.name}</div>
-    `).join('');
-}
+/**
+ * Render Add Player Form
+ * @param {HTMLElement} container - The container where the form will be rendered.
+ */
+export const renderAddPlayerForm = (container) => {
+    container.innerHTML = `
+        <h3>Add New Player</h3>
+        <form id="addPlayerForm">
+            <div class="mb-3">
+                <label for="playerName" class="form-label">Player Name</label>
+                <input type="text" class="form-control" id="playerName" placeholder="Enter player name" required>
+            </div>
+            <div class="mb-3">
+                <label for="playerTeam" class="form-label">Team</label>
+                <input type="text" class="form-control" id="playerTeam" placeholder="Enter team name" required>
+            </div>
+            <div class="mb-3">
+                <label for="playerPosition" class="form-label">Position</label>
+                <input type="text" class="form-control" id="playerPosition" placeholder="Enter position" required>
+            </div>
+            <div class="mb-3">
+                <label for="playerNationality" class="form-label">Nationality</label>
+                <input type="text" class="form-control" id="playerNationality" placeholder="Enter nationality">
+            </div>
+            <div class="mb-3">
+                <label for="playerAge" class="form-label">Age</label>
+                <input type="number" class="form-control" id="playerAge" placeholder="Enter age">
+            </div>
+            <div class="mb-3">
+                <label for="playerGoals" class="form-label">Goals</label>
+                <input type="number" class="form-control" id="playerGoals" placeholder="Enter goals scored">
+            </div>
+            <button type="submit" class="btn btn-success">Add Player</button>
+        </form>
+    `;
+};
+
+/**
+ * Render Edit Player Form
+ * @param {HTMLElement} container - The container where the form will be rendered.
+ * @param {Object} player - The player data to pre-fill the form.
+ */
+export const renderEditPlayerForm = (container, player) => {
+    container.innerHTML = `
+        <h3>Edit Player</h3>
+        <form id="editPlayerForm">
+            <div class="mb-3">
+                <label for="editPlayerName" class="form-label">Player Name</label>
+                <input type="text" class="form-control" id="editPlayerName" value="${player.name}" required>
+            </div>
+            <div class="mb-3">
+                <label for="editPlayerTeam" class="form-label">Team</label>
+                <input type="text" class="form-control" id="editPlayerTeam" value="${player.team}" required>
+            </div>
+            <div class="mb-3">
+                <label for="editPlayerPosition" class="form-label">Position</label>
+                <input type="text" class="form-control" id="editPlayerPosition" value="${player.position}" required>
+            </div>
+            <div class="mb-3">
+                <label for="editPlayerNationality" class="form-label">Nationality</label>
+                <input type="text" class="form-control" id="editPlayerNationality" value="${player.nationality || ''}">
+            </div>
+            <div class="mb-3">
+                <label for="editPlayerAge" class="form-label">Age</label>
+                <input type="number" class="form-control" id="editPlayerAge" value="${player.age || ''}">
+            </div>
+            <div class="mb-3">
+                <label for="editPlayerGoals" class="form-label">Goals</label>
+                <input type="number" class="form-control" id="editPlayerGoals" value="${player.goals || 0}">
+            </div>
+            <button type="submit" class="btn btn-warning">Update Player</button>
+        </form>
+    `;
+};
