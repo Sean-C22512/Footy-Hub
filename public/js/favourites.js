@@ -18,6 +18,7 @@ export const initFavourites = () => {
                     });
 
                     if (response.ok) {
+                        alert('Player deleted successfully!');
                         const result = await response.json();
 
                         // Toggle the icon class
@@ -44,9 +45,9 @@ export const initFavourites = () => {
 
     // Reattach listeners when players list is updated
     document.getElementById('viewPlayersBtn').addEventListener('click', () => {
-        attachFavoritePlayerListeners();
+        attachFavoritePlayerListeners(crudContent);
     });
 
     // Call once initially to attach listeners to existing buttons
-    attachFavoritePlayerListeners();
+    attachFavoritePlayerListeners(crudContent);
 };
