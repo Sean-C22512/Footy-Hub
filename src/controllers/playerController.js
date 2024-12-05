@@ -1,5 +1,16 @@
 const Player = require('../models/player'); // Import the Player model
 
+// Middleware to check if a user is signed in
+const authenticateUser = (req, res, next) => {
+    if (req.session && req.session.user) {
+        // User is authenticated
+        next();
+    } else {
+        // User is not authenticated
+        res.status(401).json({ message: 'Unauthorized. Please sign in to perform this action.' });
+    }
+};
+
 // Get all players
 exports.getAllPlayers = async (req, res) => {
     try {
@@ -25,53 +36,62 @@ exports.getPlayerById = async (req, res) => {
     }
 };
 
-// Create a new player
-exports.createPlayer = async (req, res) => {
-    try {
-        const { name, team, position, nationality, age, goals } = req.body;
+// Create a new player (requires authentication)
+exports.createPlayer = [
+    authenticateUser, // Apply the middleware
+    async (req, res) => {
+        try {
+            const { name, team, position, nationality, age, goals } = req.body;
 
-        if (!name || !team || !position) {
-            return res.status(400).json({ message: 'Name, team, and position are required' });
+            if (!name || !team || !position) {
+                return res.status(400).json({ message: 'Name, team, and position are required' });
+            }
+
+            const newPlayer = new Player({ name, team, position, nationality, age, goals });
+            const savedPlayer = await newPlayer.save();
+            res.status(201).json({ message: 'Player added successfully', player: savedPlayer });
+        } catch (error) {
+            console.error('Error adding player:', error);
+            res.status(500).json({ message: 'Server error while adding player' });
         }
-
-        const newPlayer = new Player({ name, team, position, nationality, age, goals });
-        const savedPlayer = await newPlayer.save();
-        res.status(201).json({ message: 'Player added successfully', player: savedPlayer });
-    } catch (error) {
-        console.error('Error adding player:', error);
-        res.status(500).json({ message: 'Server error while adding player' });
     }
-};
+];
 
-// Update a player
-exports.updatePlayer = async (req, res) => {
-    try {
-        const playerId = req.params.id;
-        const updateData = req.body;
+// Update a player (requires authentication)
+exports.updatePlayer = [
+    authenticateUser, // Apply the middleware
+    async (req, res) => {
+        try {
+            const playerId = req.params.id;
+            const updateData = req.body;
 
-        const updatedPlayer = await Player.findByIdAndUpdate(playerId, updateData, { new: true });
+            const updatedPlayer = await Player.findByIdAndUpdate(playerId, updateData, { new: true });
 
-        if (!updatedPlayer) {
-            return res.status(404).json({ message: 'Player not found' });
+            if (!updatedPlayer) {
+                return res.status(404).json({ message: 'Player not found' });
+            }
+
+            res.status(200).json({ message: 'Player updated successfully', player: updatedPlayer });
+        } catch (error) {
+            console.error('Error updating player:', error);
+            res.status(500).json({ message: 'Server error while updating player' });
         }
-
-        res.status(200).json({ message: 'Player updated successfully', player: updatedPlayer });
-    } catch (error) {
-        console.error('Error updating player:', error);
-        res.status(500).json({ message: 'Server error while updating player' });
     }
-};
+];
 
-// Delete a player
-exports.deletePlayer = async (req, res) => {
-    try {
-        const deletedPlayer = await Player.findByIdAndDelete(req.params.id);
-        if (!deletedPlayer) {
-            return res.status(404).json({ message: 'Player not found' });
+// Delete a player (requires authentication)
+exports.deletePlayer = [
+    authenticateUser, // Apply the middleware
+    async (req, res) => {
+        try {
+            const deletedPlayer = await Player.findByIdAndDelete(req.params.id);
+            if (!deletedPlayer) {
+                return res.status(404).json({ message: 'Player not found' });
+            }
+            res.status(200).json({ message: 'Player deleted successfully' });
+        } catch (error) {
+            console.error('Error deleting player:', error);
+            res.status(500).json({ message: 'Server error while deleting player' });
         }
-        res.status(200).json({ message: 'Player deleted successfully' });
-    } catch (error) {
-        console.error('Error deleting player:', error);
-        res.status(500).json({ message: 'Server error while deleting player' });
     }
-};
+];

@@ -5,8 +5,19 @@ export const initCrud = () => {
     const addPlayerBtn = document.getElementById('addPlayerBtn');
     const viewPlayersBtn = document.getElementById('viewPlayersBtn');
 
+    // Mock function to check login status
+    const isLoggedIn = () => {
+        return sessionStorage.getItem('userLoggedIn') === 'true';
+    };
+
+    // Add Player Button
     if (addPlayerBtn) {
         addPlayerBtn.addEventListener('click', () => {
+            if (!isLoggedIn()) {
+                alert('Please log in first to access this feature.');
+                return;
+            }
+
             renderAddPlayerForm(crudContent);
 
             const addPlayerForm = document.getElementById('addPlayerForm');
@@ -19,14 +30,14 @@ export const initCrud = () => {
                     position: document.getElementById('playerPosition').value.trim(),
                     nationality: document.getElementById('playerNationality').value.trim(),
                     age: parseInt(document.getElementById('playerAge').value, 10),
-                    goals: parseInt(document.getElementById('playerGoals').value, 10)
+                    goals: parseInt(document.getElementById('playerGoals').value, 10),
                 };
 
                 try {
                     const response = await fetch('/api/players/add', {
                         method: 'POST',
                         headers: { 'Content-Type': 'application/json' },
-                        body: JSON.stringify(playerData)
+                        body: JSON.stringify(playerData),
                     });
 
                     if (response.ok) {
@@ -44,8 +55,14 @@ export const initCrud = () => {
         });
     }
 
+    // View Players Button
     if (viewPlayersBtn) {
         viewPlayersBtn.addEventListener('click', async () => {
+            if (!isLoggedIn()) {
+                alert('Please log in first to access this feature.');
+                return;
+            }
+
             try {
                 const response = await fetch('/api/players/all');
                 const players = await response.json();
@@ -55,14 +72,14 @@ export const initCrud = () => {
                     <ul class="list-group">
                 `;
 
-                players.forEach(player => {
+                players.forEach((player) => {
                     playersHTML += `
                         <li class="list-group-item d-flex justify-content-between align-items-center">
                             ${player.name} (${player.team} - ${player.position})
                             <div>
                                 <span class="badge bg-primary">${player.goals} Goals</span>
-                                 <button class="btn btn-warning btn-sm ms-2 favourite-player-btn" data-id="${player._id}">
-                                    <i class="bi bi-star"></i> <!-- Favourites icon -->
+                                <button class="btn btn-warning btn-sm ms-2 favourite-player-btn" data-id="${player._id}">
+                                    <i class="bi bi-star"></i>
                                 </button>
                                 <button class="btn btn-info btn-sm ms-2 edit-player-btn" data-id="${player._id}">
                                     <i class="bi bi-pencil"></i>
@@ -78,7 +95,6 @@ export const initCrud = () => {
                 playersHTML += '</ul>';
                 crudContent.innerHTML = playersHTML;
 
-                // Attach event listeners for edit and delete buttons
                 attachEditPlayerListeners(crudContent);
                 attachDeletePlayerListeners(crudContent);
             } catch (error) {
@@ -89,9 +105,9 @@ export const initCrud = () => {
     }
 };
 
-// Edit player logic
+// Attach event listeners for editing players
 const attachEditPlayerListeners = (crudContent) => {
-    document.querySelectorAll('.edit-player-btn').forEach(button => {
+    document.querySelectorAll('.edit-player-btn').forEach((button) => {
         button.addEventListener('click', async () => {
             const playerId = button.getAttribute('data-id');
             try {
@@ -110,21 +126,21 @@ const attachEditPlayerListeners = (crudContent) => {
                         position: document.getElementById('editPlayerPosition').value.trim(),
                         nationality: document.getElementById('editPlayerNationality').value.trim(),
                         age: parseInt(document.getElementById('editPlayerAge').value, 10),
-                        goals: parseInt(document.getElementById('editPlayerGoals').value, 10)
+                        goals: parseInt(document.getElementById('editPlayerGoals').value, 10),
                     };
 
                     try {
                         const updateResponse = await fetch(`/api/players/update/${playerId}`, {
                             method: 'PUT',
                             headers: { 'Content-Type': 'application/json' },
-                            body: JSON.stringify(updatedPlayer)
+                            body: JSON.stringify(updatedPlayer),
                         });
 
                         if (updateResponse.ok) {
                             alert('Player updated successfully!');
                             document.getElementById('viewPlayersBtn').click(); // Refresh player list
                         } else {
-                            alert('Failed to update player');
+                            alert('Failed to update player.');
                         }
                     } catch (error) {
                         console.error('Error updating player:', error);
@@ -139,21 +155,21 @@ const attachEditPlayerListeners = (crudContent) => {
     });
 };
 
-// Delete player logic
+// Attach event listeners for deleting players
 const attachDeletePlayerListeners = (crudContent) => {
-    document.querySelectorAll('.delete-player-btn').forEach(button => {
+    document.querySelectorAll('.delete-player-btn').forEach((button) => {
         button.addEventListener('click', async () => {
             const playerId = button.getAttribute('data-id');
             if (confirm('Are you sure you want to delete this player?')) {
                 try {
                     const deleteResponse = await fetch(`/api/players/delete/${playerId}`, {
-                        method: 'DELETE'
+                        method: 'DELETE',
                     });
                     if (deleteResponse.ok) {
                         alert('Player deleted successfully!');
                         document.getElementById('viewPlayersBtn').click(); // Refresh player list
                     } else {
-                        alert('Failed to delete player');
+                        alert('Failed to delete player.');
                     }
                 } catch (error) {
                     console.error('Error deleting player:', error);
