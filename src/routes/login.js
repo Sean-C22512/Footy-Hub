@@ -2,7 +2,7 @@ const express = require('express');
 const router = express.Router();
 const User = require('../models/user'); // Import User model
 const jwt = require('jsonwebtoken');
-const bcrypt = require('bcrypt'); // For password hashing
+const bcrypt = require('bcryptjs'); // For password hashing
 
 // Login route
 router.post('/login', async (req, res) => {
