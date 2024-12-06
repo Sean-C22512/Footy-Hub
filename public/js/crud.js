@@ -5,18 +5,24 @@ export const initCrud = () => {
     const addPlayerBtn = document.getElementById('addPlayerBtn');
     const viewPlayersBtn = document.getElementById('viewPlayersBtn');
 
+    // Login message div needs to be accessed here, declared in the right scope
+    const loginMessageDiv = document.getElementById('loginMessage');
+
     // Mock function to check login status
     const isLoggedIn = () => {
-        return sessionStorage.getItem('userLoggedIn') === 'true';
+        return sessionStorage.getItem('authToken') !== null; // Check if authToken exists
     };
 
     // Add Player Button
     if (addPlayerBtn) {
         addPlayerBtn.addEventListener('click', () => {
             if (!isLoggedIn()) {
-                alert('Please log in first to access this feature.');
+                displayLoginMessage('Please log in first to access this feature.');
                 return;
             }
+
+            // Clear previous login message if logged in
+            clearLoginMessage();
 
             renderAddPlayerForm(crudContent);
 
@@ -59,9 +65,12 @@ export const initCrud = () => {
     if (viewPlayersBtn) {
         viewPlayersBtn.addEventListener('click', async () => {
             if (!isLoggedIn()) {
-                alert('Please log in first to access this feature.');
+                displayLoginMessage('Please log in first to access this feature.');
                 return;
             }
+
+            // Clear previous login message if logged in
+            clearLoginMessage();
 
             try {
                 const response = await fetch('/api/players/all');
@@ -102,6 +111,22 @@ export const initCrud = () => {
                 console.error('Error fetching players:', error);
             }
         });
+    }
+};
+
+// Display login message
+const displayLoginMessage = (message) => {
+    const loginMessageDiv = document.getElementById('loginMessage'); // Ensuring the element is accessed
+    if (loginMessageDiv) {
+        loginMessageDiv.innerHTML = `<div class="alert alert-warning">${message}</div>`;
+    }
+};
+
+// Clear login message if logged in
+const clearLoginMessage = () => {
+    const loginMessageDiv = document.getElementById('loginMessage'); // Accessing the element again
+    if (loginMessageDiv) {
+        loginMessageDiv.innerHTML = ''; // Clear the message
     }
 };
 
@@ -165,6 +190,7 @@ const attachDeletePlayerListeners = (crudContent) => {
                     const deleteResponse = await fetch(`/api/players/delete/${playerId}`, {
                         method: 'DELETE',
                     });
+
                     if (deleteResponse.ok) {
                         alert('Player deleted successfully!');
                         document.getElementById('viewPlayersBtn').click(); // Refresh player list

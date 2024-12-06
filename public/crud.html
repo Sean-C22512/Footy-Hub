@@ -24,6 +24,11 @@
   </div>
 </nav>
 
+<!-- Login Message -->
+<div id="loginMessage" class="container mt-3">
+  <!-- Login-related message will be injected here dynamically -->
+</div>
+
 <!-- CRUD Page Content -->
 <div class="container mt-5">
   <h2 class="text-center">Manage Players</h2>
@@ -42,10 +47,11 @@
   </div>
 </div>
 
-
 <!-- Bootstrap JavaScript Bundle with Popper -->
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/js/bootstrap.bundle.min.js"></script>
-<script type="module" src="js/main.js"></script>
 
+<!-- Ensure that crud.js is loaded before main.js -->
+<script type="module" src="crud.js"></script>  <!-- crud.js first -->
+<script type="module" src="js/main.js"></script>  <!-- main.js after -->
 </body>
 </html>
