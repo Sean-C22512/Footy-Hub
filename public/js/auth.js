@@ -1,93 +1,104 @@
 export function initAuth() {
     const registerForm = document.getElementById('registerForm');
-    const loginForm = document.getElementById('loginForm'); // Add login form support
+    const loginForm = document.getElementById('loginForm');
 
-    // Handle user registration
     if (registerForm) {
-        registerForm.addEventListener('submit', async (e) => {
-            e.preventDefault(); // Prevent page reload
-
-            // Collect form data
-            const name = document.getElementById('registerName').value.trim();
-            const email = document.getElementById('registerEmail').value.trim();
-            const password = document.getElementById('registerPassword').value;
-
-            // Show loading state
-            const submitButton = registerForm.querySelector('button[type="submit"]');
-            submitButton.textContent = 'Creating Account...';
-            submitButton.disabled = true;
-
-            try {
-                // API Request to register user
-                const response = await fetch('/api/register', {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ name, email, password }),
-                });
-
-                const result = await response.json();
-
-                // Handle response
-                if (response.ok) {
-                    // Show success message
-                    displayMessage('registerSuccess', result.message);
-                    registerForm.reset(); // Clear form inputs
-                } else {
-                    // Show error message
-                    displayMessage('registerError', result.message || 'Registration failed');
-                }
-            } catch (error) {
-                console.error('Error during registration:', error);
-                displayMessage('registerError', 'An unexpected error occurred. Please try again later.');
-            } finally {
-                // Reset loading state
-                submitButton.textContent = 'Create Account';
-                submitButton.disabled = false;
-            }
-        });
+        handleRegister(registerForm);
     }
 
-    // Handle user login
     if (loginForm) {
-        loginForm.addEventListener('submit', async (e) => {
-            e.preventDefault(); // Prevent page reload
-
-            // Collect form data
-            const email = document.getElementById('email').value.trim();
-            const password = document.getElementById('password').value;
-
-            try {
-                // API request for login
-                const response = await fetch('/api/login', {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ email, password }),
-                });
-
-                const result = await response.json();
-
-                if (response.ok) {
-                    alert('Login successful!');
-                    // Save token or user data if necessary
-                    localStorage.setItem('token', result.token); // Store JWT or similar token
-                    // Redirect to the home page
-                    window.location.href = '/index.html';
-                } else {
-                    alert(result.message || 'Login failed');
-                }
-            } catch (error) {
-                console.error('Error during login:', error);
-                alert('An unexpected error occurred. Please try again later.');
-            }
-        });
+        handleLogin(loginForm);
     }
 }
 
-// Helper function to display success/error messages
-function displayMessage(elementId, message) {
-    const element = document.getElementById(elementId);
-    if (element) {
-        element.classList.remove('d-none');
-        element.textContent = message;
+function handleRegister(form) {
+    form.addEventListener('submit', async (e) => {
+        e.preventDefault();
+
+        const name = document.getElementById('registerName').value.trim();
+        const email = document.getElementById('registerEmail').value.trim();
+        const password = document.getElementById('registerPassword').value;
+
+        try {
+            const response = await fetch('/api/register', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ name, email, password }),
+            });
+
+            const result = await response.json();
+
+            if (response.ok) {
+                showToast('Registration successful!', 'success');
+                form.reset();
+            } else {
+                // Handle validation errors
+                result.errors.forEach((error) => {
+                    showToast(error.msg, 'danger'); // Display each validation error in a toast
+                });
+            }
+        } catch (error) {
+            console.error('Error during registration:', error);
+            showToast('An unexpected error occurred. Please try again.', 'danger');
+        }
+    });
+}
+
+function handleLogin(form) {
+    form.addEventListener('submit', async (e) => {
+        e.preventDefault();
+
+        const email = document.getElementById('email').value.trim();
+        const password = document.getElementById('password').value;
+
+        try {
+            const response = await fetch('/api/login', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ email, password }),
+            });
+
+            const result = await response.json();
+
+            if (response.ok) {
+                showToast('Login successful!', 'success');
+                localStorage.setItem('token', result.token);
+                window.location.href = '/index.html';
+            } else {
+                showToast(result.message || 'Login failed', 'danger');
+            }
+        } catch (error) {
+            console.error('Error during login:', error);
+            showToast('An unexpected error occurred. Please try again.', 'danger');
+        }
+    });
+}
+
+/**
+ * Display a toast notification
+ * @param {string} message - The message to display in the toast
+ * @param {string} type - The type of toast (e.g., 'success', 'danger', 'info', 'warning')
+ */
+function showToast(message, type = 'info') {
+    console.log('Toast called with message:', message, 'and type:', type);
+    const toastContainer = document.getElementById('toastContainer');
+    if (!toastContainer) {
+        console.error('Toast container not found');
+        return;
     }
+    const toastId = `toast-${Date.now()}`;
+    const toast = document.createElement('div');
+    toast.id = toastId;
+    toast.className = `toast align-items-center text-bg-${type} border-0 mb-2`;
+    toast.role = 'alert';
+    toast.innerHTML = `
+        <div class="d-flex">
+            <div class="toast-body">${message}</div>
+            <button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast" aria-label="Close"></button>
+        </div>
+    `;
+    toastContainer.appendChild(toast);
+    const bsToast = new bootstrap.Toast(toast, { delay: 5000 });
+    bsToast.show();
+    toast.addEventListener('hidden.bs.toast', () => toast.remove());
 }

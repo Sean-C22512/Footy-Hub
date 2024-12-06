@@ -15,26 +15,32 @@
     <link rel="stylesheet" href="styles.css">
 </head>
 <body data-page="index">
+
+<!-- Toast Container -->
+<div class="toast-container position-fixed bottom-0 end-0 p-3" id="toastContainer"></div>
+
 <!-- Navbar -->
 <nav class="navbar navbar-expand-lg navbar-dark">
     <div class="container-fluid">
-        <a class="navbar-brand" href="#">FootyHub</a>
+        <a class="navbar-brand" href="index.html">FootyHub</a>
         <div class="collapse navbar-collapse" id="navbarNav">
-            <ul class="navbar-nav ms-auto">
-                <li class="nav-item">
-                    <a class="nav-link" href="register.html">Login/Register</a>
-                </li>
+            <ul class="navbar-nav ms-auto" id="navbarMenu">
+                <!-- Dynamic content will be injected here -->
             </ul>
         </div>
     </div>
 </nav>
 
+
+
+
 <!-- Hero Section -->
 <div class="hero-section">
     <h1>Welcome to FootyHub</h1>
     <p>Your ultimate football companion. Stats, players, and matches all in one place.</p>
-    <a href="register.html" class="btn">Get Started</a>
+    <a href="#" id="getStartedBtn" class="btn btn-primary">Get Started</a>
 </div>
+
 
 <!-- Cards Section -->
 <div class="cards-section">
@@ -66,7 +72,7 @@
 <!-- Bootstrap JavaScript Bundle with Popper -->
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/js/bootstrap.bundle.min.js"></script>
 <!-- Ensure that crud.js is loaded before main.js -->
-<script type="module" src="crud.js"></script>  <!-- crud.js first -->
+<script type="module" src="js/crud.js"></script>  <!-- crud.js first -->
 <script type="module">
     // Ensure main.js executes only after crud.js has been loaded
     import './js/main.js';
