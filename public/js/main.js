@@ -6,33 +6,9 @@ document.addEventListener('DOMContentLoaded', () => {
     console.log(`Current page: ${currentPage}`);
 
     const token = localStorage.getItem('token'); // Check for the token
-    if (!token) {
-        console.warn('No token found. Redirecting unauthenticated user to index.html.');
-        // Clear sessionStorage to ensure the user doesn't retain allowed pages after logout
-        sessionStorage.clear();
-    }
+    let isAuthenticated = !!token; // Boolean flag for authentication
 
-
-    // Initialize allowed pages with default pages (index and register)
-    let allowedPages = sessionStorage.getItem('allowedPages')
-        ? JSON.parse(sessionStorage.getItem('allowedPages'))
-        : ['index', 'register','crud','analyze','players'];
-
-    console.log(`Allowed pages: ${allowedPages}`);
-
-    // Ensure 'register' is always in the allowed pages for unauthenticated users
-    if (!allowedPages.includes('register')) {
-        allowedPages.push('register');
-        sessionStorage.setItem('allowedPages', JSON.stringify(allowedPages));
-        console.log(`Page "register" added to allowedPages.`);
-    }
-
-    // Redirect if the page is not allowed
-    if (!allowedPages.includes(currentPage)) {
-        console.warn(`Access denied to page: ${currentPage}. Redirecting to index.`);
-        window.location.href = '/index.html';
-        return;
-    }
+    console.log(`User is ${isAuthenticated ? 'authenticated' : 'not authenticated'}`);
 
     // Initialize Dynamic Navbar Logic
     setupNavbar();
@@ -47,6 +23,12 @@ document.addEventListener('DOMContentLoaded', () => {
             break;
         case 'crud':
             initCrud(); // CRUD operations are handled in crud.js
+            break;
+        case 'analyze':
+            console.log('Initialize analyze logic');
+            break;
+        case 'players':
+            console.log('Initialize players logic');
             break;
         default:
             console.error(`Unknown page: ${currentPage}`);

@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Analyze Teams - FootyHub</title>
+    <!-- Quartz Theme from Bootswatch -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootswatch@5.2.3/dist/quartz/bootstrap.min.css">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css" rel="stylesheet">
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body data-page="analyze">
+<!-- Navbar -->
+<nav class="navbar navbar-expand-lg navbar-dark">
+    <div class="container-fluid">
+        <a class="navbar-brand" href="index.html">FootyHub</a>
+        <div class="collapse navbar-collapse" id="navbarNav">
+            <ul class="navbar-nav ms-auto" id="navbarMenu">
+                <!-- Dynamic navbar -->
+            </ul>
+        </div>
+    </div>
+</nav>
+
+<!-- Hero Section -->
+<header class="hero-section text-center">
+    <h1>Analyze Teams</h1>
+    <p>Search for any football team and explore detailed insights.</p>
+</header>
+
+<!-- Search Section -->
+<section class="search-section py-4">
+    <div class="container text-center">
+        <input type="text" id="teamSearchInput" class="form-control mb-3" placeholder="Enter team name (e.g., Arsenal)">
+        <button id="searchTeamBtn" class="btn btn-primary">Search Team</button>
+    </div>
+</section>
+
+<!-- Content Section -->
+<main class="container mt-5">
+    <div id="teamInfo" class="row">
+        <!-- Dynamic Content Loaded Here -->
+    </div>
+</main>
+
+<!-- Toast Container -->
+<div class="toast-container position-fixed bottom-0 end-0 p-3" id="toastContainer"></div>
+
+<!-- Bootstrap and JavaScript Bundle -->
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/js/bootstrap.bundle.min.js"></script>
+<script type="module" src="js/analyze.js"></script>
+<script type="module">
+    import './js/main.js';
+</script>
+</body>
+</html>
