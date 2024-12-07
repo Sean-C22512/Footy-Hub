@@ -1,15 +1,5 @@
 const Player = require('../models/player'); // Import the Player model
-
-// Middleware to check if a user is signed in
-const authenticateUser = (req, res, next) => {
-    if (req.session && req.session.user) {
-        // User is authenticated
-        next();
-    } else {
-        // User is not authenticated
-        res.status(401).json({ message: 'Unauthorized. Please sign in to perform this action.' });
-    }
-};
+const { verifyAuth } = require('../middlewares/authMiddleware'); // Import verifyAuth middleware
 
 // Get all players
 exports.getAllPlayers = async (req, res) => {
@@ -38,7 +28,7 @@ exports.getPlayerById = async (req, res) => {
 
 // Create a new player (requires authentication)
 exports.createPlayer = [
-    authenticateUser, // Apply the middleware
+    verifyAuth, // Apply the JWT-based middleware
     async (req, res) => {
         try {
             const { name, team, position, nationality, age, goals } = req.body;
@@ -54,12 +44,12 @@ exports.createPlayer = [
             console.error('Error adding player:', error);
             res.status(500).json({ message: 'Server error while adding player' });
         }
-    }
+    },
 ];
 
 // Update a player (requires authentication)
 exports.updatePlayer = [
-    authenticateUser, // Apply the middleware
+    verifyAuth, // Apply the JWT-based middleware
     async (req, res) => {
         try {
             const playerId = req.params.id;
@@ -76,12 +66,12 @@ exports.updatePlayer = [
             console.error('Error updating player:', error);
             res.status(500).json({ message: 'Server error while updating player' });
         }
-    }
+    },
 ];
 
 // Delete a player (requires authentication)
 exports.deletePlayer = [
-    authenticateUser, // Apply the middleware
+    verifyAuth, // Apply the JWT-based middleware
     async (req, res) => {
         try {
             const deletedPlayer = await Player.findByIdAndDelete(req.params.id);
@@ -93,5 +83,5 @@ exports.deletePlayer = [
             console.error('Error deleting player:', error);
             res.status(500).json({ message: 'Server error while deleting player' });
         }
-    }
+    },
 ];

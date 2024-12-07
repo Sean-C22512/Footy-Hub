@@ -5,10 +5,18 @@ document.addEventListener('DOMContentLoaded', () => {
     const currentPage = document.body.getAttribute('data-page'); // Get the current page
     console.log(`Current page: ${currentPage}`);
 
+    const token = localStorage.getItem('token'); // Check for the token
+    if (!token) {
+        console.warn('No token found. Redirecting unauthenticated user to index.html.');
+        // Clear sessionStorage to ensure the user doesn't retain allowed pages after logout
+        sessionStorage.clear();
+    }
+
+
     // Initialize allowed pages with default pages (index and register)
     let allowedPages = sessionStorage.getItem('allowedPages')
         ? JSON.parse(sessionStorage.getItem('allowedPages'))
-        : ['index', 'register'];
+        : ['index', 'register','crud','analyze','players'];
 
     console.log(`Allowed pages: ${allowedPages}`);
 
@@ -49,7 +57,7 @@ document.addEventListener('DOMContentLoaded', () => {
 /**
  * Setup Dynamic Navbar
  */
-function setupNavbar() {
+export default function setupNavbar() {
     const navbarMenu = document.getElementById('navbarMenu');
     const token = localStorage.getItem('token'); // Check if user is logged in
 
@@ -68,10 +76,17 @@ function setupNavbar() {
             // Handle Logout
             document.getElementById('logoutBtn').addEventListener('click', () => {
                 localStorage.removeItem('token'); // Clear token
+                sessionStorage.clear(); // Clear allowed pages
                 window.location.href = '/index.html'; // Redirect to home page
             });
         }
-        // If the user is not logged in, navbarMenu remains empty.
+
+        else {
+            // User is not logged in: Clear session storage to ensure no residual access
+            console.warn('No token found. Clearing session storage for unauthenticated user.');
+            sessionStorage.clear();
+        }
+
     }
 }
 

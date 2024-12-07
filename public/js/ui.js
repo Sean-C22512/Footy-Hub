@@ -72,3 +72,57 @@ export const renderEditPlayerForm = (container, player) => {
         </form>
     `;
 };
+
+/**
+ * Renders the list of players into the provided container
+ * @param {HTMLElement} container - The container where the player list will be rendered.
+ * @param {Array} players - The list of player objects to render.
+ */
+export const renderPlayerList = (container, players) => {
+    let playersHTML = `
+        <h3>All Players</h3>
+        <ul class="list-group">
+    `;
+
+    players.forEach((player) => {
+        playersHTML += `
+            <li class="list-group-item d-flex justify-content-between align-items-center">
+                ${player.name} (${player.team} - ${player.position})
+                <div>
+                    <span class="badge bg-primary">${player.goals} Goals</span>
+                    <button class="btn btn-warning btn-sm ms-2 favourite-player-btn" data-id="${player._id}">
+                        <i class="bi bi-star"></i>
+                    </button>
+                    <button class="btn btn-info btn-sm ms-2 edit-player-btn" data-id="${player._id}">
+                        <i class="bi bi-pencil"></i>
+                    </button>
+                    <button class="btn btn-danger btn-sm ms-2 delete-player-btn" data-id="${player._id}">
+                        <i class="bi bi-trash"></i>
+                    </button>
+                </div>
+            </li>
+        `;
+    });
+
+    playersHTML += '</ul>';
+    container.innerHTML = playersHTML;
+};
+
+/**
+ * Fetch players from the API
+ * @param {string} token - The authentication token for API requests.
+ * @returns {Promise<Array>} - Resolves to a list of players.
+ */
+export const fetchPlayers = async (token) => {
+    const response = await fetch('/api/players/all', {
+        headers: token ? { Authorization: `Bearer ${token}` } : {},
+    });
+
+    if (!response.ok) {
+        throw new Error('Failed to fetch players');
+    }
+
+    return response.json();
+};
+
+

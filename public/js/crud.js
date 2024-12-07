@@ -1,29 +1,34 @@
-import { renderAddPlayerForm, renderEditPlayerForm } from './ui.js';
+import setupNavbar from './main.js';
+import { renderPlayerList, fetchPlayers, renderAddPlayerForm ,renderEditPlayerForm} from './ui.js';
+import { showToast } from './utils/toast.js';
 
+
+const loginMessageDiv = document.getElementById('loginMessage');
 export const initCrud = () => {
     const crudContent = document.getElementById('crudContent');
     const addPlayerBtn = document.getElementById('addPlayerBtn');
     const viewPlayersBtn = document.getElementById('viewPlayersBtn');
+    const token = localStorage.getItem('token'); // Check if user is logged in
 
-    // Login message div needs to be accessed here, declared in the right scope
-    const loginMessageDiv = document.getElementById('loginMessage');
+    // Setup Navbar (including Login/Logout)
+    setupNavbar();
 
-    // Mock function to check login status
-    const isLoggedIn = () => {
-        return sessionStorage.getItem('authToken') !== null; // Check if authToken exists
-    };
+    // Display warning if no token is present
+    if (!token) {
+        displayLoginMessage('Please log in first to access this feature.');
+    } else {
+        clearLoginMessage();
+    }
 
-    // Add Player Button
+    // Handle "Add Player" Button Click
     if (addPlayerBtn) {
         addPlayerBtn.addEventListener('click', () => {
-            if (!isLoggedIn()) {
+            if (!token) {
                 displayLoginMessage('Please log in first to access this feature.');
                 return;
             }
 
-            // Clear previous login message if logged in
             clearLoginMessage();
-
             renderAddPlayerForm(crudContent);
 
             const addPlayerForm = document.getElementById('addPlayerForm');
@@ -42,16 +47,19 @@ export const initCrud = () => {
                 try {
                     const response = await fetch('/api/players/add', {
                         method: 'POST',
-                        headers: { 'Content-Type': 'application/json' },
+                        headers: {
+                            'Content-Type': 'application/json',
+                            Authorization: `Bearer ${token}`,
+                        },
                         body: JSON.stringify(playerData),
                     });
 
                     if (response.ok) {
-                        alert('Player added successfully!');
+                        showToast('Player added successfully!', 'success'); // Show success toast
                         viewPlayersBtn.click(); // Refresh player list
                     } else {
                         const error = await response.json();
-                        alert(`Failed to add player: ${error.message}`);
+                        showToast(`Failed to add player: ${error.message}`, 'danger'); // Show error toast
                     }
                 } catch (error) {
                     console.error('Error adding player:', error);
@@ -61,82 +69,40 @@ export const initCrud = () => {
         });
     }
 
-    // View Players Button
+    // Handle "View Players" Button Click
     if (viewPlayersBtn) {
         viewPlayersBtn.addEventListener('click', async () => {
-            if (!isLoggedIn()) {
+            if (!token) {
                 displayLoginMessage('Please log in first to access this feature.');
                 return;
             }
 
-            // Clear previous login message if logged in
             clearLoginMessage();
 
             try {
-                const response = await fetch('/api/players/all');
-                const players = await response.json();
-
-                let playersHTML = `
-                    <h3>All Players</h3>
-                    <ul class="list-group">
-                `;
-
-                players.forEach((player) => {
-                    playersHTML += `
-                        <li class="list-group-item d-flex justify-content-between align-items-center">
-                            ${player.name} (${player.team} - ${player.position})
-                            <div>
-                                <span class="badge bg-primary">${player.goals} Goals</span>
-                                <button class="btn btn-warning btn-sm ms-2 favourite-player-btn" data-id="${player._id}">
-                                    <i class="bi bi-star"></i>
-                                </button>
-                                <button class="btn btn-info btn-sm ms-2 edit-player-btn" data-id="${player._id}">
-                                    <i class="bi bi-pencil"></i>
-                                </button>
-                                <button class="btn btn-danger btn-sm ms-2 delete-player-btn" data-id="${player._id}">
-                                    <i class="bi bi-trash"></i>
-                                </button>
-                            </div>
-                        </li>
-                    `;
-                });
-
-                playersHTML += '</ul>';
-                crudContent.innerHTML = playersHTML;
-
+                const players = await fetchPlayers(token);
+                renderPlayerList(crudContent, players);
+                // Attach event listeners for edit and delete actions
                 attachEditPlayerListeners(crudContent);
                 attachDeletePlayerListeners(crudContent);
             } catch (error) {
-                crudContent.innerHTML = '<p class="text-danger">Failed to fetch players.</p>';
                 console.error('Error fetching players:', error);
+                crudContent.innerHTML = '<p class="text-danger">Failed to fetch players.</p>';
             }
         });
     }
 };
 
-// Display login message
-const displayLoginMessage = (message) => {
-    const loginMessageDiv = document.getElementById('loginMessage'); // Ensuring the element is accessed
-    if (loginMessageDiv) {
-        loginMessageDiv.innerHTML = `<div class="alert alert-warning">${message}</div>`;
-    }
-};
 
-// Clear login message if logged in
-const clearLoginMessage = () => {
-    const loginMessageDiv = document.getElementById('loginMessage'); // Accessing the element again
-    if (loginMessageDiv) {
-        loginMessageDiv.innerHTML = ''; // Clear the message
-    }
-};
-
-// Attach event listeners for editing players
 const attachEditPlayerListeners = (crudContent) => {
-    document.querySelectorAll('.edit-player-btn').forEach((button) => {
+    crudContent.querySelectorAll('.edit-player-btn').forEach((button) => {
         button.addEventListener('click', async () => {
+            const token = localStorage.getItem('token'); // Fetch token dynamically
             const playerId = button.getAttribute('data-id');
             try {
-                const response = await fetch(`/api/players/${playerId}`);
+                const response = await fetch(`/api/players/${playerId}`, {
+                    headers: { Authorization: `Bearer ${token}` },
+                });
                 const player = await response.json();
 
                 renderEditPlayerForm(crudContent, player);
@@ -157,51 +123,75 @@ const attachEditPlayerListeners = (crudContent) => {
                     try {
                         const updateResponse = await fetch(`/api/players/update/${playerId}`, {
                             method: 'PUT',
-                            headers: { 'Content-Type': 'application/json' },
+                            headers: {
+                                'Content-Type': 'application/json',
+                                Authorization: `Bearer ${token}`, // Use token dynamically
+                            },
                             body: JSON.stringify(updatedPlayer),
                         });
 
                         if (updateResponse.ok) {
-                            alert('Player updated successfully!');
+                            showToast('Player updated successfully!', 'success');
                             document.getElementById('viewPlayersBtn').click(); // Refresh player list
                         } else {
-                            alert('Failed to update player.');
+                            showToast('Failed to update player.', 'danger');
                         }
                     } catch (error) {
                         console.error('Error updating player:', error);
-                        alert('An error occurred while updating the player.');
+                        showToast('An error occurred while updating the player.', 'danger');
                     }
                 });
             } catch (error) {
                 console.error('Error fetching player:', error);
-                alert('Failed to fetch player details.');
+                showToast('Failed to fetch player details.', 'danger');
             }
         });
     });
 };
 
-// Attach event listeners for deleting players
+
+/**
+ * Attach event listeners for deleting players
+ * @param {HTMLElement} crudContent - The container where the player list is rendered.
+ */
 const attachDeletePlayerListeners = (crudContent) => {
-    document.querySelectorAll('.delete-player-btn').forEach((button) => {
+    crudContent.querySelectorAll('.delete-player-btn').forEach((button) => {
         button.addEventListener('click', async () => {
             const playerId = button.getAttribute('data-id');
+            const token = localStorage.getItem('token'); // Retrieve token dynamically
             if (confirm('Are you sure you want to delete this player?')) {
                 try {
                     const deleteResponse = await fetch(`/api/players/delete/${playerId}`, {
                         method: 'DELETE',
+                        headers: { Authorization: `Bearer ${token}` },
                     });
 
                     if (deleteResponse.ok) {
-                        alert('Player deleted successfully!');
-                        document.getElementById('viewPlayersBtn').click(); // Refresh player list
+                        showToast('Player deleted successfully!', 'success');
+                        document.getElementById('viewPlayersBtn').click(); // Refresh the list
                     } else {
-                        alert('Failed to delete player.');
+                        showToast('Failed to delete player.', 'danger');
                     }
                 } catch (error) {
                     console.error('Error deleting player:', error);
-                    alert('An error occurred while deleting the player.');
+                    showToast('An error occurred while deleting the player.', 'danger');
                 }
             }
         });
     });
+};
+
+
+// Display login message
+const displayLoginMessage = (message) => {
+    if (loginMessageDiv) {
+        loginMessageDiv.innerHTML = `<div class="alert alert-warning">${message}</div>`;
+    }
+};
+
+// Clear login message
+const clearLoginMessage = () => {
+    if (loginMessageDiv) {
+        loginMessageDiv.innerHTML = '';
+    }
 };

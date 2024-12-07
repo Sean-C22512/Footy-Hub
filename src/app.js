@@ -39,4 +39,10 @@ const errorHandler = (err, req, res, next) => {
 
 app.use(errorHandler);
 
+app.use((req, res, next) => {
+    res.set('Cache-Control', 'no-store, no-cache, must-revalidate, private');
+    next();
+});
+
+
 module.exports = app;
