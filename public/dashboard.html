@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard - FootyHub</title>
+
+    <!-- Quartz Theme from Bootswatch -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootswatch@5.2.3/dist/quartz/bootstrap.min.css">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css" rel="stylesheet">
+
+    <!-- Custom styles -->
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body data-page="dashboard">
+<!-- Toast Container -->
+<div class="toast-container position-fixed bottom-0 end-0 p-3" id="toastContainer"></div>
+
+<!-- Navbar -->
+<nav class="navbar navbar-expand-lg navbar-dark">
+    <div class="container-fluid">
+        <a class="navbar-brand" href="index.html">FootyHub</a>
+        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse" id="navbarNav">
+            <ul class="navbar-nav ms-auto" id="navbarMenu">
+                <!-- Dynamic content injected here -->
+            </ul>
+        </div>
+    </div>
+</nav>
+
+<!-- Dashboard Section -->
+<div class="container mt-5">
+    <h1 class="text-center mb-4">Player Dashboard</h1>
+    <p class="text-center text-muted">Manage your favorite players or explore detailed player information.</p>
+
+    <div class="row" id="playerResults">
+        <!-- Player cards will be dynamically injected here -->
+    </div>
+</div>
+
+<!-- Bootstrap JavaScript Bundle with Popper -->
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/js/bootstrap.bundle.min.js"></script>
+<!-- JavaScript files -->
+<script type="module" src="js/dashboard.js"></script>
+</body>
+</html>
