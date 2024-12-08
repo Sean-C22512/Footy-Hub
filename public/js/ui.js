@@ -90,9 +90,7 @@ export const renderPlayerList = (container, players) => {
                 ${player.name} (${player.team} - ${player.position})
                 <div>
                     <span class="badge bg-primary">${player.goals} Goals</span>
-                    <button class="btn btn-warning btn-sm ms-2 favourite-player-btn" data-id="${player._id}">
-                        <i class="bi bi-star"></i>
-                    </button>
+               
                     <button class="btn btn-info btn-sm ms-2 edit-player-btn" data-id="${player._id}">
                         <i class="bi bi-pencil"></i>
                     </button>

@@ -3,8 +3,8 @@ const dotenv = require('dotenv');
 const connectDB = require('./config/db');
 const registerRoute = require('./routes/register');
 const playerRoutes = require('./routes/playerRoutes');
-const favoritesRoutes = require('./routes/favoritesRoutes');
 const loginRoute = require('./routes/login');
+const dashboardRoutes = require('./routes/dashboardRoutes'); // Adjust path as needed
 
 // Load environment variables
 dotenv.config();
@@ -24,8 +24,8 @@ app.use(express.static('public'));
 // Routes
 app.use('/api/register', registerRoute);
 app.use('/api/players', playerRoutes);
-app.use('/api/favorites', favoritesRoutes);
 app.use('/api', loginRoute);
+app.use('/api/dashboard', dashboardRoutes);
 
 // Centralized error-handling middleware
 const errorHandler = (err, req, res, next) => {

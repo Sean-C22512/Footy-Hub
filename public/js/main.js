@@ -30,6 +30,7 @@ document.addEventListener('DOMContentLoaded', () => {
         case 'players':
             console.log('Initialize players logic');
             break;
+
         default:
             console.error(`Unknown page: ${currentPage}`);
             break;
